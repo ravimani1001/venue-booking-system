@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
+const venueRoutes = require('./routes/venueRoutes');
 const app = express();
 
 app.use(cors(
@@ -20,5 +22,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api', venueRoutes);
+
+app.use(errorHandler)
+
 
 module.exports = app;
