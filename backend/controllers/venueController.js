@@ -58,7 +58,14 @@ const addVenue = async (req, res) => {
 
 const getAllVenues = async (req, res) => {
   try {
-    const venues = await Venue.find().populate('ownerId', 'name email');
+    const { location, capacity, name } = req.query;
+
+    let query = {};
+    if (name) query.name = new RegExp(name, 'i');
+    if (location) query.location = new RegExp(location, 'i');
+    if (capacity) query.capacity = { $gte: Number(capacity) };
+
+    const venues = await Venue.find(query).populate('ownerId', 'name email');
 
     res.status(200).json({
       message: 'Venues fetched successfully',
