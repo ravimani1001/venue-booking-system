@@ -56,7 +56,23 @@ const addVenue = async (req, res) => {
   }
 };
 
+const getAllVenues = async (req, res) => {
+  try {
+    const venues = await Venue.find().populate('ownerId', 'name email');
+
+    res.status(200).json({
+      message: 'Venues fetched successfully',
+      total: venues.length,
+      venues
+    });
+
+  } catch (error) {
+    console.error('Error fetching venues:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
     addVenue,
-
+    getAllVenues,
 }
