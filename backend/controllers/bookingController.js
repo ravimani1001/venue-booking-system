@@ -1,0 +1,61 @@
+const Venue = require('../models/Venue');
+const Booking = require('../models/Booking');
+
+const bookVenue = async (req, res) => {
+  try {
+    const { venueId, dates } = req.body;
+
+    if (!venueId || !Array.isArray(dates) || dates.length === 0) {
+      return res.status(400).json({ message: 'Venue ID and at least one booking date are required' });
+    }
+
+    const venue = await Venue.findById(venueId);
+    if (!venue) return res.status(404).json({ message: 'Venue not found' });
+
+    const requestedDates = dates.map(date => new Date(date).toDateString());
+    const alreadyBooked = venue.bookedDates.map(d => new Date(d).toDateString());
+
+    // Check for conflicts
+    const conflicts = requestedDates.filter(date => alreadyBooked.includes(date));
+    if (conflicts.length > 0) {
+      return res.status(400).json({
+        message: 'Some of the selected dates are already booked',
+        conflicts
+      });
+    }
+
+    // Add new dates
+    const newBookedDates = requestedDates.map(date => new Date(date));
+    venue.bookedDates.push(...newBookedDates);
+    await venue.save();
+
+    // Calculate total price
+    const pricePerDay = venue.price; // add this to Venue model
+    const totalPrice = pricePerDay * dates.length;
+
+    // Create booking
+    const booking = await Booking.create({
+    userId: req.user._id,
+    venueId: venue._id,
+    dates: newBookedDates,
+    totalPrice
+    });
+
+    res.status(201).json({
+      message: 'Venue booked successfully',
+      venue: venue.name,
+      location : venue.location,
+      booking
+    });
+
+  } catch (error) {
+    console.error('Booking error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+module.exports = {
+    bookVenue,
+
+}

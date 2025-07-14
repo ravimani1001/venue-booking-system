@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const venueRoutes = require('./routes/venueRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 const app = express();
 
 app.use(cors(
@@ -23,6 +24,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api', venueRoutes);
+app.use('/api', bookingRoutes);
+
 
 app.use(errorHandler)
 
