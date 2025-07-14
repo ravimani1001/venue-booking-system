@@ -17,8 +17,8 @@ const uploadToCloudinary = (fileBuffer) => {
 
 const addVenue = async (req, res) => {
   try {
-    const { name, description, location, capacity } = req.body;
-    if(!name || !description || !location || !capacity){
+    const { name, description, location, capacity, price } = req.body;
+    if(!name || !description || !location || !capacity || !price){
         return res.status(400).json({message : "All fields are required"})
     }
 
@@ -40,6 +40,7 @@ const addVenue = async (req, res) => {
       description,
       location,
       capacity : parseInt(capacity),
+      price : parseFloat(price),
       images: imageUrls,
       ownerId: req.user._id,
     });
