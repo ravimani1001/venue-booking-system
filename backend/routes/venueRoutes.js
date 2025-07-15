@@ -7,6 +7,6 @@ const upload = require('../middleware/multer');
 router.post('/venues', protect, checkAdmin, upload.array('images', 5), addVenue);
 router.get('/venues', getAllVenues);
 router.get('/my-venues', protect, checkAdmin, getMyVenues);
-router.put('/venues/:id', protect, checkAdmin, updateVenue);
+router.put('/venues/:id', protect, checkAdmin, upload.array('images', 5), updateVenue);
 
 module.exports = router;

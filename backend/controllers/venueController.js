@@ -102,6 +102,8 @@ const updateVenue = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, location, capacity, price } = req.body;
+    const files = req.files;
+
     const updates = {}
     if(name) updates.name = name;
     if(description) updates.description = description;
@@ -124,6 +126,16 @@ const updateVenue = async (req, res) => {
         venue[field] = updates[field];
       }
     });
+
+    // Handle image replacement if files are sent
+    if (files && files.length > 0) {
+      const imageUrls = [];
+      for (const file of files) {
+        const imageUrl = await uploadToCloudinary(file.buffer);
+        imageUrls.push(imageUrl);
+      }
+      venue.images = imageUrls; // replace all images
+    }
 
     await venue.save();
 
