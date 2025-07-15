@@ -98,9 +98,50 @@ const getMyVenues = async (req, res) => {
   }
 };
 
+const updateVenue = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, location, capacity, price } = req.body;
+    const updates = {}
+    if(name) updates.name = name;
+    if(description) updates.description = description;
+    if(location) updates.location = location;
+    if(capacity) updates.capacity = parseInt(capacity);
+    if(price) updates.price = parseFloat(price);
+
+    const venue = await Venue.findById(id);
+    if (!venue) return res.status(404).json({ message: 'Venue not found' });
+
+    // Check if logged-in admin owns this venue
+    if (venue.ownerId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized: You do not own this venue' });
+    }
+
+    // Update allowed fields
+    const allowedFields = ['name', 'description', 'location', 'capacity', 'price'];
+    allowedFields.forEach(field => {
+      if (updates[field] !== undefined && updates[field] !== null) {
+        venue[field] = updates[field];
+      }
+    });
+
+    await venue.save();
+
+    res.status(200).json({
+      message: 'Venue updated successfully',
+      venue
+    });
+
+  } catch (error) {
+    console.error('Error updating venue:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 
 module.exports = {
     addVenue,
     getAllVenues,
     getMyVenues,
+    updateVenue,
 }
