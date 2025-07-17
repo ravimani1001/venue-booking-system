@@ -203,10 +203,48 @@ const deleteVenue = async (req, res) => {
   }
 };
 
+const blockVenueDates = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { dates } = req.body;
+
+    if (!Array.isArray(dates) || dates.length === 0) {
+      return res.status(400).json({ message: 'At least one date is required' });
+    }
+
+    const venue = await Venue.findById(id);
+    if (!venue) return res.status(404).json({ message: 'Venue not found' });
+
+    // Ownership check
+    if (venue.ownerId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    const existingDates = venue.bookedDates.map(date => new Date(date).toDateString());
+    const newDates = dates
+      .map(date => new Date(date))
+      .filter(date => !existingDates.includes(date.toDateString()));
+
+    venue.bookedDates.push(...newDates);
+    await venue.save();
+
+    res.status(200).json({
+      message: 'Dates blocked successfully',
+      blockedDates: venue.bookedDates
+    });
+
+  } catch (error) {
+    console.error('Block Dates Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
 module.exports = {
   addVenue,
   getAllVenues,
   getMyVenues,
   updateVenue,
   deleteVenue,
+  blockVenueDates,
 };
