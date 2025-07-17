@@ -66,12 +66,13 @@ const addVenue = async (req, res) => {
 
 const getAllVenues = async (req, res) => {
   try {
-    const { location, capacity, name } = req.query;
+    const { location, capacity, name, price } = req.query;
 
     let query = {};
     if (name) query.name = new RegExp(name, "i");
     if (location) query.location = new RegExp(location, "i");
     if (capacity) query.capacity = { $gte: Number(capacity) };
+    if (price) query.price = { $lte: Number(price) };
 
     const venues = await Venue.find(query).populate("ownerId", "name email");
 
