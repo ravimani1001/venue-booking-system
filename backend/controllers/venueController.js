@@ -277,6 +277,27 @@ const unblockVenueDates = async (req, res) => {
   }
 };
 
+const getSingleVenue = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const venue = await Venue.findById(id);
+
+    if (!venue) {
+      return res.status(404).json({ message: 'Venue not found' });
+    }
+
+    res.status(200).json({
+      message: 'Venue fetched successfully',
+      venue
+    });
+
+  } catch (error) {
+    console.error('Error fetching venue:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 
 module.exports = {
   addVenue,
@@ -286,4 +307,5 @@ module.exports = {
   deleteVenue,
   blockVenueDates,
   unblockVenueDates,
+  getSingleVenue,
 };
