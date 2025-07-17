@@ -99,8 +99,54 @@ const getMyBookings = async (req, res) => {
   }
 };
 
+const deleteMyBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const booking = await Booking.findById(id);
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    // Check if this booking belongs to the logged-in user
+    if (booking.userId.toString() !== userId) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    // Check if any booking date is in the future
+    const today = new Date().toDateString();
+    const hasFutureDates = booking.dates.some(date => {
+      return new Date(date).toDateString() >= today;
+    });
+
+    if (!hasFutureDates) {
+      return res.status(400).json({ message: 'Cannot cancel past bookings' });
+    }
+
+    // Remove dates from the venue's bookedDates[]
+    const venue = await Venue.findById(booking.venueId);
+    if (venue) {
+      const cancelDates = booking.dates.map(d => new Date(d).toDateString());
+      venue.bookedDates = venue.bookedDates.filter(
+        d => !cancelDates.includes(new Date(d).toDateString())
+      );
+      await venue.save();
+    }
+
+    // Delete the booking
+    await booking.deleteOne();
+
+    res.status(200).json({ message: 'Booking cancelled successfully' });
+
+  } catch (error) {
+    console.error('Error canceling booking:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
 module.exports = {
     bookVenue,
     getBookingsForAdmin,
     getMyBookings,
+    deleteMyBooking,
 }
