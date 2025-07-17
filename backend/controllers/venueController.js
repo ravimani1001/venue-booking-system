@@ -239,6 +239,43 @@ const blockVenueDates = async (req, res) => {
   }
 };
 
+const unblockVenueDates = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { dates } = req.body;
+
+    if (!Array.isArray(dates) || dates.length === 0) {
+      return res.status(400).json({ message: 'At least one date is required to unblock' });
+    }
+
+    const venue = await Venue.findById(id);
+    if (!venue) return res.status(404).json({ message: 'Venue not found' });
+
+    // Ownership check
+    if (venue.ownerId.toString() !== req.user._id) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    const removeDates = dates.map(d => new Date(d).toDateString());
+
+    // Keep only dates that are NOT in the removeDates list
+    venue.bookedDates = venue.bookedDates.filter(
+      date => !removeDates.includes(new Date(date).toDateString())
+    );
+
+    await venue.save();
+
+    res.status(200).json({
+      message: 'Dates unblocked successfully',
+      bookedDates: venue.bookedDates
+    });
+
+  } catch (error) {
+    console.error('Unblock Dates Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 
 module.exports = {
   addVenue,
@@ -247,4 +284,5 @@ module.exports = {
   updateVenue,
   deleteVenue,
   blockVenueDates,
+  unblockVenueDates,
 };
