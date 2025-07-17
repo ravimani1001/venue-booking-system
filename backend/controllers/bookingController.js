@@ -54,8 +54,32 @@ const bookVenue = async (req, res) => {
   }
 };
 
+const getBookingsForAdmin = async (req, res) => {
+  try {
+    const adminId = req.user._id;
+
+    // Step 1: Get all venue IDs owned by admin
+    const venues = await Venue.find({ ownerId: adminId });
+    const venueIds = venues.map(v => v._id);
+
+    // Step 2: Find all bookings for those venues
+    const bookings = await Booking.find({ venueId: { $in: venueIds } })
+      .populate('venueId', 'name location') // get venue name + location
+      .populate('userId', 'name email');     // get user info
+
+    res.status(200).json({
+      message: 'All bookings for your venues',
+      total: bookings.length,
+      bookings
+    });
+
+  } catch (error) {
+    console.error('Error getting admin bookings:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
 module.exports = {
     bookVenue,
-
+    getBookingsForAdmin,
 }
