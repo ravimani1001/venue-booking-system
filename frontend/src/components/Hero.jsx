@@ -48,7 +48,7 @@ const Hero = () => {
     // </section>
 
     <section
-      className="relative h-screen bg-cover bg-center mx-auto mb-16"
+      className="relative h-screen bg-cover bg-center mx-auto"
       style={{ backgroundImage: `url(${heroImage})` }}
     >
       {/* Gradient Overlay */}
