@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const RegisterForm = () => {
 
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { user , setUser } = useAuth()
 
   // Update input fields
   const handleChange = (e) => {
@@ -26,21 +28,21 @@ const RegisterForm = () => {
     setError('');
 
     try {
-      // 1️⃣ Register the user
+      
       await API.post('/auth/signup', formData);
 
-      // 2️⃣ Cookie is set, fetch profile
+      
       const res = await API.get('/auth/profile');
+      setUser(res.data.user)
+      // console.log(user)
       
-      const role  = res.data.role;
-      
-
-      // 3️⃣ Redirect based on role
-      if (role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/user/dashboard');
-      }
+      navigate('/')
+      // Redirect based on role
+      // if (role === 'admin') {
+      //   navigate('/admin/dashboard');
+      // } else {
+      //   navigate('/user/dashboard');
+      // }
     } catch (err) {
       console.error(err);
       setError(

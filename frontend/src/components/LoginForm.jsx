@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { user , setUser } = useAuth()
 
   // Handles form submission
   const handleSubmit = async (e) => {
@@ -14,25 +16,27 @@ const LoginForm = () => {
     setError('');
 
     try {
-      // 1️⃣ Send login request to backend
+      
       const loginRes = await API.post('/auth/login', { email, password });
-      console.log("Login Response : ", loginRes)
-      // 2️⃣ Cookie is set automatically — now we fetch user info
+      
       const res = await API.get('/auth/profile');
       console.log(res)
-      const  role  = res.data.role;
-      console.log("Role - ",role)
+      
+      setUser(res.data.user)
+      // console.log(user)
 
-      // 3️⃣ Redirect based on user role
-      if (role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/user/dashboard');
-      }
+      navigate('/')
+      // Redirect based on user role
+      // if (role === 'admin') {
+      //   navigate('/admin/dashboard');
+      // } else {
+      //   navigate('/dashboard');
+      // }
     } catch (err) {
       console.error(err);
       await API.post('/auth/logout')
       console.log("Logged Out")
+      setUser(null)
       setError(
         err?.response?.data?.message || 'Login failed. Please try again.'
       );
