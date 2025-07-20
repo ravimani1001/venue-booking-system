@@ -15,7 +15,25 @@ const Header = () => {
           Eventra
         </Link>
 
-        <nav className="space-x-6 hidden md:flex items-center">
+        {/* <nav className="space-x-6 hidden md:flex items-center"> 
+          {user?.role === 'admin' && (
+            <>
+              <Link to={dashboardLink} className="text-darkText hover:text-primary">
+                Dashboard
+              </Link>
+              <Link to="/admin/venues" className="text-darkText hover:text-primary">
+                My Venues
+              </Link>
+              <Link to="/admin/bookings" className="text-darkText hover:text-primary">
+                Venue Bookings
+              </Link>
+
+              
+            </>
+          )}
+        </nav> */}
+
+        <nav className=" space-x-6 hidden md:flex items-center">
           {/* Public or role-aware nav links */}
           {!user && (
             <>
@@ -53,21 +71,31 @@ const Header = () => {
 
           {user?.role === 'admin' && (
             <>
+              
+                
               <Link to={dashboardLink} className="text-darkText hover:text-primary">
                 Dashboard
               </Link>
               <Link to="/admin/venues" className="text-darkText hover:text-primary">
-                Venues
+                My Venues
               </Link>
               <Link to="/admin/bookings" className="text-darkText hover:text-primary">
-                Bookings
+                Venue Bookings
               </Link>
+              
+              
+              
+              {/* User features for admin */}
+              <Link to="/venues" className="text-darkText hover:text-primary">Browse Venues</Link>
+              <Link to="/my-bookings" className="text-darkText hover:text-primary">My Bookings</Link>
+
               <button
                 onClick={logout}
                 className="text-darkText hover:text-primary"
               >
                 Logout
               </button>
+              
             </>
           )}
         </nav>
