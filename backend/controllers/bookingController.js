@@ -84,7 +84,7 @@ const getMyBookings = async (req, res) => {
     const userId = req.user._id;
 
     const bookings = await Booking.find({ userId })
-      .populate('venueId', 'name location price')
+      .populate('venueId', 'name location price images')
       .sort({ createdAt: -1 });
 
     res.status(200).json({
