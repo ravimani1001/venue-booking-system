@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import Footer from "../../components/Footer";
 import mybg from '../../assets/hero.jpg';
 import bgworld from '../../assets/bgworld.jpg';
+import API from '../../services/api'
 
 // Simulated upcoming bookings — will replace with real data later
 const fakeBookings = [
@@ -52,6 +53,10 @@ const formatDate = (dateStr) =>
 
 const UserDashboard = () => {
   const [today, setToday] = useState("");
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [cities, setCities] = useState(0);
 
   useEffect(() => {
     const now = new Date();
@@ -65,14 +70,55 @@ const UserDashboard = () => {
     );
   }, []);
 
+  //Getting actual data using api call
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        // Fetch user bookings
+        const bookingsRes = await API.get('/bookings/me')
+        setBookings(bookingsRes.data.bookings || []);
+        const allCities = bookingsRes.data.bookings.map(b => b.venueId.location);
+        const uniqueCities = new Set(allCities); // ensures uniqueness
+        setCities(uniqueCities.size);
+
+      } catch (err) {
+        setError("Failed to load dashboard data.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+  
   // Filter only future bookings
-  const futureBookings = fakeBookings.filter((booking) =>
+  const futureBookings = bookings.filter((booking) =>
     booking.dates.some((dateStr) => new Date(dateStr) > new Date())
   );
 
   const { user } = useAuth()
   const username = user.name[0].toUpperCase() + user.name.slice(1)
 // max-w-6xl
+  
+  if(loading){
+    return (
+      <>
+        <Header/>
+        <p className="text-center py-10">Loading dashboard...</p>
+      </>
+    )
+  }
+
+  if(error){
+    return (
+      <>
+        <Header/>
+        <p className="text-center text-red-500 py-10">{error}</p>
+      </>
+    )
+  }
+
   return (
     <>
     <Header/>
@@ -98,7 +144,7 @@ const UserDashboard = () => {
       <div className="relative z-20 grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="backdrop-brightness-100 backdrop-blur-sm shadow-sm  rounded-xl p-4 text-center">
           <div className="text-indigo-600 text-3xl mb-2">📆</div>
-          <h2 className="text-xl font-semibold text-white">{fakeBookings.length}</h2>
+          <h2 className="text-xl font-semibold text-white">{bookings.length}</h2>
           <p className="text-white text-sm">Total Bookings</p>
         </div>
         <div className="backdrop-brightness-100 backdrop-blur-sm shadow-sm rounded-xl p-4 text-center">
@@ -108,7 +154,7 @@ const UserDashboard = () => {
         </div>
         <div className="backdrop-brightness-100 backdrop-blur-sm shadow-sm rounded-xl p-4 text-center">
           <div className="text-yellow-500 text-3xl mb-2">📍</div>
-          <h2 className="text-xl font-semibold text-white">3</h2>
+          <h2 className="text-xl font-semibold text-white">{cities}</h2>
           <p className="text-white text-sm">Cities Booked</p>
         </div>
       </div>
@@ -116,38 +162,7 @@ const UserDashboard = () => {
 
       </div>
 
-      {/* Section 3: Upcoming Bookings */}
-      {/* <div>
-        <h2 className="text-xl font-semibold mb-4">Upcoming Bookings</h2>
 
-        {futureBookings.length === 0 ? (
-          <p className="text-gray-500 italic">No upcoming bookings yet.</p>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {futureBookings.map((booking) => (
-              <div
-                key={booking.id}
-                className="bg-white rounded-2xl shadow-sm border p-5"
-              >
-                <h3 className="text-lg font-bold text-indigo-700">
-                  {booking.venueName}
-                </h3>
-                <p className="text-sm text-gray-500">{booking.location}</p>
-                <div className="mt-2">
-                  <p className="text-sm font-medium mb-1 text-gray-700">
-                    Dates:
-                  </p>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    {booking.dates.map((dateStr, idx) => (
-                      <li key={idx}>• {formatDate(dateStr)}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div> */}
 
         {/* Section 3: Upcoming Bookings */}
 <div className="p-6">
@@ -164,17 +179,17 @@ const UserDashboard = () => {
         >
           {/* Venue Image */}
           <img
-            src={mybg}
-            alt={booking.venueName}
+            src={booking.venueId.images[1].url || mybg}
+            alt={booking.venueId.name}
             className="w-full h-40 object-cover"
           />
 
           {/* Details */}
           <div className="p-4">
             <h3 className="text-lg font-bold text-indigo-700">
-              {booking.venueName}
+              {booking.venueId.name}
             </h3>
-            <p className="text-sm text-gray-500">{booking.location}</p>
+            <p className="text-sm text-gray-500">{booking.venueId.location}</p>
 
             <div className="mt-3">
               <p className="text-sm font-medium mb-1 text-gray-700">
@@ -195,12 +210,18 @@ const UserDashboard = () => {
 
 
       {/* Section 4: CTA */}
-      <div className="text-center mt-6">
+      <div className="text-center  mt-6">
         <Link
           to="/venues"
           className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition"
         >
           🔎 Browse New Venues
+        </Link>
+        <Link
+          to="/my-bookings"
+          className="ml-5 mt-2 inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition"
+        >
+          📜 Go to Bookings
         </Link>
       </div>
     </div>
