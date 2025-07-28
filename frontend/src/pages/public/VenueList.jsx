@@ -53,13 +53,18 @@ export default function VenuesPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-8">
             Find Your Perfect Venue
           </h1>
+          <div className="w-full max-w-lg bg-white flex rounded-full">
           <input
             type="text"
             placeholder="Search by venue name"
-            className="w-full max-w-lg px-8 py-4 rounded-full text-black outline-none shadow-md"
+            className="w-full max-w-lg px-8 py-4 rounded-full text-black outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          <button className="text-black rounded-full hover:shadow-lg outline-none px-4">
+            🔍
+          </button>
+          </div>
         </div>
       </div>
 
