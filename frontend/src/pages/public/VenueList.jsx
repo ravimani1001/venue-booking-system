@@ -4,6 +4,7 @@ import venueListBg from "../../assets/hero.jpg"
 import hero from "../../assets/hero.jpg"
 import Header from '../../components/Header.jsx'
 import Footer from '../../components/Footer.jsx'
+import API from '../../services/api.js'
 
 const dummyVenues = [
   {
@@ -33,9 +34,58 @@ export default function VenuesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     location: "",
-    maxPrice: "",
-    minCapacity: "",
+    price: "",
+    capacity: "",
+    name: "",
   });
+
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error , setError] = useState("");
+
+
+  const applyFilters = async () => {
+    setLoading(true);
+    try {
+      const res = await API.get("/api/venues", {
+        params: {
+          location: filters.location,
+          price: filters.price,
+          capacity: filters.capacity,
+          name : filters.name,
+        },
+        // withCredentials: true, // only if needed
+      });
+
+      setVenues(res.data.venues); // assuming backend returns { venues: [...] }
+    } catch (err) {
+      console.error("Error fetching filtered venues", err);
+      setError("Error :", err.message || err)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeFilters = async () => {
+    setLoading(true);
+    try {
+      setFilters({
+        location: "",
+        price: "",
+        capacity: "",
+        name: "",
+      })
+
+      const res = await API.get("/api/venues");
+
+      setVenues(res.data.venues); // assuming backend returns { venues: [...] }
+    } catch (err) {
+      console.error("Error fetching filtered venues", err);
+      setError("Error :", err.message || err)
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -59,9 +109,11 @@ export default function VenuesPage() {
             placeholder="Search by venue name"
             className="w-full max-w-lg px-8 py-4 rounded-full text-black outline-none"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, name: e.target.value }))
+            }
           />
-          <button className="text-black rounded-full hover:shadow-lg outline-none px-4">
+          <button onClick={applyFilters} className="text-black rounded-full hover:shadow-lg outline-none px-4">
             🔍
           </button>
           </div>
@@ -69,11 +121,11 @@ export default function VenuesPage() {
       </div>
 
       {/* Filters Section */}
-      <div className="max-w-6xl mx-auto px-4 mt-8 grid sm:grid-cols-3 gap-4">
+      <div className="max-w-6xl mx-auto px-4 mt-8 grid sm:grid-cols-4 gap-4">
         <input
           type="text"
           placeholder="Location (e.g. Delhi)"
-          className="p-3 rounded-lg border shadow-sm"
+          className="p-3 rounded-lg border border-gray-300 shadow-lg"
           value={filters.location}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, location: e.target.value }))
@@ -82,7 +134,7 @@ export default function VenuesPage() {
         <input
           type="number"
           placeholder="Max Price"
-          className="p-3 rounded-lg border shadow-sm"
+          className="p-3 rounded-lg border border-gray-300 shadow-lg"
           value={filters.maxPrice}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, maxPrice: e.target.value }))
@@ -91,13 +143,28 @@ export default function VenuesPage() {
         <input
           type="number"
           placeholder="Min Capacity"
-          className="p-3 rounded-lg border shadow-sm"
+          className="p-3 rounded-lg border border-gray-300 shadow-lg"
           value={filters.minCapacity}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, minCapacity: e.target.value }))
           }
         />
-      </div>
+        <div className="grid grid-cols-2 gap-2">
+            <button
+            onClick={applyFilters}
+            className="p-3 rounded-lg bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition"
+          >
+            Apply Filters
+          </button>
+
+          <button
+            onClick={removeFilters}
+            className="p-3 rounded-lg bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition"
+          >
+            Remove Filters
+          </button>
+        </div>
+        </div>
 
       {/* Venues Grid */}
       <div className="max-w-6xl mx-auto px-4 mt-10 mb-16">
