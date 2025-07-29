@@ -162,18 +162,18 @@ export default function VenuesPage() {
           type="number"
           placeholder="Max Price"
           className="p-3 rounded-lg border border-gray-300 shadow-lg"
-          value={filters.maxPrice}
+          value={filters.price}
           onChange={(e) =>
-            setFilters((prev) => ({ ...prev, maxPrice: e.target.value }))
+            setFilters((prev) => ({ ...prev, price: e.target.value }))
           }
         />
         <input
           type="number"
           placeholder="Min Capacity"
           className="p-3 rounded-lg border border-gray-300 shadow-lg"
-          value={filters.minCapacity}
+          value={filters.capacity}
           onChange={(e) =>
-            setFilters((prev) => ({ ...prev, minCapacity: e.target.value }))
+            setFilters((prev) => ({ ...prev, capacity: e.target.value }))
           }
         />
         <div className="grid grid-cols-2 gap-2">
@@ -201,13 +201,13 @@ export default function VenuesPage() {
           }
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {venues.length == 0 ? <p>No Venue Found</p> : venues.map((venue) => (
+          {venues.length == 0 && !loading ? <p>No Venue Found</p> : venues.map((venue) => (
             <div
               key={venue._id}
               className="bg-white rounded-xl shadow-md overflow-hidden transition hover:shadow-lg border"
             >
               <img
-                src={venue.images[0]}
+                src={venue.images[0].url}
                 alt={venue.name}
                 className="h-48 w-full object-cover"
               />
