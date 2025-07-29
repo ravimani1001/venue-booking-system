@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import { useAuth } from "../../context/AuthContext";
 import Footer from "../../components/Footer";
 import mybg from '../../assets/hero.jpg';
-import bgworld from '../../assets/bgworld.jpg';
+import venueListBg from "../../assets/hero.jpg"
 import API from '../../services/api'
 
 // Simulated upcoming bookings — will replace with real data later
@@ -123,7 +123,7 @@ const UserDashboard = () => {
     <>
     <Header/>
     <div className="  mx-auto space-y-10 ">
-        <div className="relative space-y-10 w-full py-5 px-5 bg-cover bg-center bg-[url('/src/assets/cafeshop.webp')] " >
+        <div className="relative space-y-10 w-full py-5 px-5 bg-cover bg-center bg-[url('/src/assets/hero.jpg')] " >
             <div className="absolute inset-0 bg-gradient-to-br from-black/70 to-black/30 z-10" />
       {/* Section 1: Greeting & Calendar Tile */}
       <div className="relative z-20 flex flex-col md:flex-row items-start md:items-center justify-center md:justify-between gap-6 p-6 rounded-2xl shadow-sm  ">
@@ -136,25 +136,26 @@ const UserDashboard = () => {
         {/* Greeting */}
         <div className="text-center md:text-right">
           <h1 className="text-3xl md:text-6xl font-bold text-white">Welcome back, <span>{username}</span>!</h1>
-          <p className="text-indigo-600 mt-1">Let’s get you booked for your next celebration!</p>
+          <p className="text-white mt-1 font-serif text-base">Let’s get you booked for your next celebration!</p>
         </div>
       </div>
 
       {/* Section 2: Booking Summary Stats */}
-      <div className="relative z-20 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="backdrop-brightness-100 backdrop-blur-sm shadow-sm  rounded-xl p-4 text-center">
-          <div className="text-indigo-600 text-3xl mb-2">📆</div>
-          <h2 className="text-xl font-semibold text-white">{bookings.length}</h2>
+      <div className="relative z-20 grid grid-cols-3 sm:grid-cols-3 gap-4">
+        <div className=" shadow-sm  rounded-xl p-4 text-center">
+          {/* backdrop-brightness-100 backdrop-blur-sm */}
+          <div className="text-indigo-600 text-4xl mb-2">📆</div>
+          <h2 className="text-3xl font-extrabold text-white">{bookings.length}</h2>
           <p className="text-white text-sm">Total Bookings</p>
         </div>
-        <div className="backdrop-brightness-100 backdrop-blur-sm shadow-sm rounded-xl p-4 text-center">
-          <div className="text-green-500 text-3xl mb-2">🏠</div>
-          <h2 className="text-xl font-semibold text-white">{futureBookings.length}</h2>
+        <div className=" shadow-sm rounded-xl p-4 text-center">
+          <div className="text-green-500 text-4xl mb-2">🏠</div>
+          <h2 className="text-3xl font-extrabold text-white">{futureBookings.length}</h2>
           <p className="text-white text-sm">Upcoming Events</p>
         </div>
-        <div className="backdrop-brightness-100 backdrop-blur-sm shadow-sm rounded-xl p-4 text-center">
-          <div className="text-yellow-500 text-3xl mb-2">📍</div>
-          <h2 className="text-xl font-semibold text-white">{cities}</h2>
+        <div className=" shadow-sm rounded-xl p-4 text-center">
+          <div className="text-yellow-500 text-4xl mb-2">📍</div>
+          <h2 className="text-3xl font-extrabold text-white">{cities}</h2>
           <p className="text-white text-sm">Cities Booked</p>
         </div>
       </div>
@@ -165,13 +166,13 @@ const UserDashboard = () => {
 
 
         {/* Section 3: Upcoming Bookings */}
-<div className="p-6">
+<div className="p-6 mx-auto">
   <h2 className="text-xl font-semibold mb-4 text-center">Upcoming Bookings</h2>
 
   {futureBookings.length === 0 ? (
     <p className="text-gray-500 italic">No upcoming bookings yet.</p>
   ) : (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mx-auto px-4 max-w-6xl">
       {futureBookings.map((booking) => (
         <div
           key={booking.id}
