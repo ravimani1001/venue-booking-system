@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import venueListBg from "../../assets/hero.jpg"
 import hero from "../../assets/hero.jpg"
@@ -43,11 +43,28 @@ export default function VenuesPage() {
   const [loading, setLoading] = useState(false);
   const [error , setError] = useState("");
 
+  useEffect(() => {
+    const getVenues = async () => {
+      try {
+        setLoading(true)
+        const res = await API.get('/venues')
+        setVenues(res.data.venues);
+      } catch (error) {
+        setError("Error : ", error.message);
+      }
+      finally{
+        setLoading(false)
+      }
+    }
+
+    getVenues();
+  }, [])
+  
 
   const applyFilters = async () => {
     setLoading(true);
     try {
-      const res = await API.get("/api/venues", {
+      const res = await API.get("/venues", {
         params: {
           location: filters.location,
           price: filters.price,
@@ -76,7 +93,7 @@ export default function VenuesPage() {
         name: "",
       })
 
-      const res = await API.get("/api/venues");
+      const res = await API.get("/venues");
 
       setVenues(res.data.venues); // assuming backend returns { venues: [...] }
     } catch (err) {
@@ -108,7 +125,7 @@ export default function VenuesPage() {
             type="text"
             placeholder="Search by venue name"
             className="w-full max-w-lg px-8 py-4 rounded-full text-black outline-none"
-            value={searchTerm}
+            value={filters.name}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, name: e.target.value }))
             }
@@ -169,13 +186,13 @@ export default function VenuesPage() {
       {/* Venues Grid */}
       <div className="max-w-6xl mx-auto px-4 mt-10 mb-16">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {dummyVenues.map((venue) => (
+          {venues.length == 0 ? <p>No Venue Found</p> : venues.map((venue) => (
             <div
-              key={venue.id}
+              key={venue._id}
               className="bg-white rounded-xl shadow-md overflow-hidden transition hover:shadow-lg border"
             >
               <img
-                src={hero}
+                src={venue.images[0]}
                 alt={venue.name}
                 className="h-48 w-full object-cover"
               />
