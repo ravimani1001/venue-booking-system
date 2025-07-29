@@ -86,14 +86,24 @@ export default function VenuesPage() {
   const removeFilters = async () => {
     setLoading(true);
     try {
+      let n = filters.name;
       setFilters({
         location: "",
         price: "",
         capacity: "",
-        name: "",
+        name : n
+        
       })
 
-      const res = await API.get("/venues");
+      let res;
+      if(filters.name === "")
+      res = await API.get("/venues");
+      else
+      res = await API.get("/venues" , {
+        params : {
+          name : filters.name
+        }
+      });
 
       setVenues(res.data.venues); // assuming backend returns { venues: [...] }
     } catch (err) {
@@ -185,6 +195,11 @@ export default function VenuesPage() {
 
       {/* Venues Grid */}
       <div className="max-w-6xl mx-auto px-4 mt-10 mb-16">
+        <div>
+          {
+            loading ? <p>Loading Venues</p> : error!=="" ? <p className="text-red-600">Error : {error}</p> : <></>
+          }
+        </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {venues.length == 0 ? <p>No Venue Found</p> : venues.map((venue) => (
             <div
