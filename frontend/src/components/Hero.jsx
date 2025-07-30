@@ -1,5 +1,6 @@
 import React from "react";
 import heroImage from "../assets/hero2.jpg"; // use a placeholder for now
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -65,15 +66,15 @@ const Hero = () => {
         <p className="text-white text-sm md:text-xl mb-8 max-w-xl">
           Discover and book the perfect venue for weddings, parties, and business events — all in one place.
         </p>
-        <a
-          href="#venues"
+        <Link
+          to="/venues"
           className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg text-lg hover:bg-accent transition shadow-lg"
         >
           Browse Venues
           {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
           </svg> */}
-        </a>
+        </Link>
       </div>
     </section>
   );
