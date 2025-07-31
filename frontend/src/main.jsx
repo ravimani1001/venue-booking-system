@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css'
+import 'react-datepicker/dist/react-datepicker.css';
 
 import App from './App'; // Landing page
 import Auth from './pages/Auth';
@@ -18,6 +19,7 @@ import VenueList from './pages/public/VenueList'; // Public route
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
 import RoleRoute from './routes/RoleRoute';
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
