@@ -220,7 +220,7 @@ export default function VenuesPage() {
                   Starting at ₹{venue.price.toLocaleString()}
                 </p>
                 <Link
-                  to={`/venues/${venue.id}`}
+                  to={`/venues/${venue._id}`}
                   className="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition"
                 >
                   View Details
