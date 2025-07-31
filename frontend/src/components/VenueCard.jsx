@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
-const VenueCard = ({ name, location, image }) => {
+const VenueCard = ({ name, location, image, vid }) => {
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition group">
       <div className="h-48 overflow-hidden">
@@ -13,9 +14,9 @@ const VenueCard = ({ name, location, image }) => {
       <div className="p-4">
         <h3 className="text-xl font-semibold text-darkText mb-1">{name}</h3>
         <p className="text-lightText text-sm mb-4">{location}</p>
-        <button className="bg-primary text-white px-4 py-2 rounded hover:bg-accent transition text-sm">
+        <Link to={`/venues/${vid}`} className="bg-primary text-white px-4 py-3 rounded hover:bg-accent transition text-sm">
           View Details
-        </button>
+        </Link>
       </div>
     </div>
   );

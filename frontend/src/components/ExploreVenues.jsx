@@ -81,6 +81,7 @@ const ExploreVenues = () => {
                 name={venue.name}
                 location={venue.location}
                 image={venue.images[0].url}
+                vid = {venue._id}
               />)
             }) :
             <p>No Venues Found</p>
