@@ -15,6 +15,7 @@ import AdminVenues from './pages/admin/AdminVenues';
 import AdminBookings from './pages/admin/AdminBookings';
 
 import VenueList from './pages/public/VenueList'; // Public route
+import VenueDetails from './pages/user/VenueDetails';
 
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
@@ -30,6 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/venues" element={<VenueList />} /> 
+          <Route path="/venues/:id" element={<VenueDetails />} />
 
           {/* Private Routes for Any Logged-in User */}
           <Route
