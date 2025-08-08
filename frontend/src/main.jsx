@@ -4,6 +4,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css'
 import 'react-datepicker/dist/react-datepicker.css';
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+
 import App from './App'; // Landing page
 import Auth from './pages/Auth';
 
