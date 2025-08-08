@@ -103,7 +103,7 @@ export default function VenueDetails() {
             </div>
 
             {/* Booking Section */}
-            <div className="bg-white border rounded-lg shadow-md p-6">
+            <div className="bg-white border rounded-lg shadow-md py-6 px-14 md:px-10 ">
                 <h2 className="text-xl font-semibold mb-4">Select Your Booking Dates</h2>
 
                 <DatePicker
