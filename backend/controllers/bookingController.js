@@ -143,10 +143,35 @@ const deleteMyBooking = async (req, res) => {
   }
 };
 
+// GET /api/bookings/venue/:venueId/future-dates
+const getFutureBookedDates = async (req, res) => {
+  const { venueId } = req.params;
+
+  try {
+    const today = new Date();
+
+    const bookings = await Booking.find({
+      venue: venueId,
+      dates: { $elemMatch: { $gte: today } },
+    });
+
+    // Flatten and filter all future dates
+    const futureDates = bookings.flatMap(b =>
+      b.dates.filter(date => new Date(date) >= today)
+    );
+
+    return res.status(200).json({ futureDates });
+  } catch (err) {
+    console.error("Error fetching future booked dates", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 module.exports = {
     bookVenue,
     getBookingsForAdmin,
     getMyBookings,
     deleteMyBooking,
+    getFutureBookedDates,
 }
